@@ -1,21 +1,30 @@
 #!/usr/bin/python
+# start by import libraries we want tu use
 import RPi.GPIO as GPIO
-import time
+from time import sleep
+import os 
  
 #GPIO SETUP
-channel = 21
+pin = 17   #soil moisture sensor pin 17 gpio
+pump = 27  #Relay pump pin 27 gpio
+
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(channel, GPIO.IN)
+GPIO.setup(pin, GPIO.IN)
+GPIO.setup(pump, GPIO.OUT)
  
-def callback(channel):
-        if GPIO.input(channel):
-                print "Water Detected!"
-        else:
-                print "Water Detected!"
- 
-GPIO.add_event_detect(channel, GPIO.BOTH, bouncetime=300)  # let us know when the pin goes HIGH or LOW
-GPIO.add_event_callback(channel, callback)  # assign function to GPIO PIN, Run function on change
- 
-# infinite loop
-while True:
-        time.sleep(1)
+
+while (True):
+    
+    if GPIO.input (pin):
+            print("Need to Water The Garden and Water Pump will be Switched On")
+            GPIO.output(pump, True)
+            sleep(10)
+            GPIO.output(pump, False)
+            sleep(1)
+    
+    else:
+            print("Soil has enough Moisture")
+            GPIO.output(pump, True)
+            sleep(10)
+            
+GPIO.cleanup()
